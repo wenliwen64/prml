@@ -1,5 +1,4 @@
 import numpy as np
-from collections import defaultdict
 from .utils import cond_check, cond_check_eq
 
 class KMeans:
@@ -57,7 +56,9 @@ class KMeans:
 
         # initialize iteration difference
         mu_diff = 1.0
-        while mu_diff > self.epsilon:
+        iters = 0
+        while mu_diff > self.epsilon and iters < self.max_iters:
+            iters += 1
             membership = self.__group_assignment__(A, mu)
             new_mu = self.__compute_new_mu__(A, membership, K)
             mu_diff = np.linalg.norm([np.linalg.norm(row, ord=2) for row in (new_mu - mu)], ord=2)
