@@ -1,6 +1,7 @@
 import math
 import numpy as np
-from collections import defaultdict
+from collections import Counter, defaultdict
+
 
 def cond_check(*args):
     assert args[0], ' '.join(map(str,args[1:]))
@@ -10,6 +11,7 @@ def cond_check_eq(*args):
     msg = ' '.join([str(args[0]), "is not equal to", str(args[1])])
     assert args[0] == args[1], msg
 
+
 def gaussian(x, mu, Sigma):
     """
 
@@ -18,6 +20,26 @@ def gaussian(x, mu, Sigma):
     """
     return ((2. * math.pi)**len(mu) * np.linalg.det(Sigma))**-.5 \
          * np.exp(-.5 * (x - mu).dot(np.linalg.inv(Sigma)).dot(x - mu))
+
+
+def node_score(score_f):
+    def new_score_f(tgts):
+        if len(tgts) == 0:
+            return 0.
+        tgt_cnter = Counter(tgts)
+        return np.sum([score_f(cnts / len(tgts)) for cnts in tgt_cnter.values()])
+
+    return new_score_f
+
+@node_score
+def gini(p):
+    return p * (1 - p)
+
+
+@node_score
+def cross_entropy(p):
+    return -p * np.log(p)
+
 
 def partition_equal(lhs, rhs):
     """

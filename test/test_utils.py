@@ -1,5 +1,6 @@
-from prml.utils import cond_check, cond_check_eq, partition_equal
+from prml.utils import (cond_check, cond_check_eq, gini, cross_entropy, partition_equal)
 import pytest
+import numpy as np
 
 class TestCondCheck:
     def test_cond_check(self):
@@ -11,6 +12,20 @@ class TestCondCheck:
         with pytest.raises(AssertionError, match="5 is not equal to 6"):
             (a, b) = (5, 6)
             cond_check_eq(a, b)
+
+
+def test_cross_entropy():
+    assert np.isclose(cross_entropy([1, 1, 1, 0, 0]), 0.67301166)
+    assert np.isclose(cross_entropy([1, 2, 3]), -np.log(1 / 3))
+    assert np.isclose(cross_entropy([1]), 0.0)
+    assert np.isclose(cross_entropy([]), 0.0)
+
+
+def test_gini():
+    assert np.isclose(gini([1, 1, 1, 0, 0]), .48)
+    assert np.isclose(gini([1, 2, 3]), 2. / 3.)
+    assert np.isclose(gini([1]), 0.)
+    assert np.isclose(gini([]), 0.)
 
 
 class TestPartitionCheck:
